@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hallmark Movie Bingo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+    <style>
+        body,
+        html {
+            height: 100%;
+            background: #EFF2F1;
+            margin: 0;
+            padding: 0;
+            font-weight: bold;
+            font-family: 'Indie Flower', cursive;
+        }
+
+        .content {
+            max-width: 768px;
+            min-width: 360px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100%;
+            margin: 0 auto;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            grid-template-rows: repeat(5, 1fr);
+        }
+
+        .board-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            cursor: pointer;
+            text-align: center;
+
+        }
+
+        .board-item.selected {
+            background: rgb(22, 148, 22);
+            color: white;
+        }
+
+        .board-item {
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        @media all and (min-width: 650px) {
+            .board-item {
+                box-sizing: border-box;
+                font-size: 18px;
+            }
+        }
+
+        .board>div {
+            background: white;
+            width: 100%;
+            border: 1px solid grey;
+        }
+
+        .board>div::before {
+            content: "";
+            display: inline-block;
+            width: 1px;
+            height: 0;
+            padding-bottom: 100%;
+        }
+
+        button {
+            padding: 16px;
+            border: none;
+            background: rgb(119, 12, 12);
+            color: white;
+            font-size: 16px;
+            border-radius: 16px;
+            font-family: 'Indie Flower', cursive;
+            margin-bottom: 24px;
+            font-weight: bold;
+        }
+
+        #title {
+            margin: 0;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <h1 id="title">Hallmark Movie Bingo!!</h1>
+        <button id="generate-new-board">Generate New Board</button>
+        <div id="player-board" class="board">
+        </div>
+    </div>
+    <script>
+        (function () {
+            let playerBoard = JSON.parse(localStorage.getItem('board'));
+            const entries = [
+                "Small Town",
+                "Our Song",
+                "Flirtatious Snowball Fight",
+                "Hand Written Letter",
+                "Baked Goods",
+                "Love Interest Doesn't get Along at First",
+                "Nosy Best Friend",
+                "Widow / Widower",
+                "Mistletoe",
+                "Caroling",
+                "Picking out a Christmas Tree",
+                "Hot Chocolate",
+                "Christmas Decoration",
+                "Small Diner",
+                "City Girl Realizes She Likes Small Towns",
+                "Man in a Flannel Shirt",
+                "Santa Exists?",
+                "Big Secret",
+                "Town with a made up Christmas Name",
+                "Breaks up with prior love interest for new one",
+                "Wisdom shared from older person",
+                "Grumpy Boss",
+                "Unhappy at work",
+                "Snowfall",
+                "Road Trip",
+                "Romance at a cabin",
+                "Christmas Shop",
+                "Snowstorm shuts down town",
+                "Career Driven Female Lead",
+                "Christmas Pageant",
+                "Christmas Party",
+                "Ice Skating",
+                "Interrupted First Kiss",
+                "Child that isn't the female lead's",
+                "The Ex tries to get back with the lead",
+                "Inappropriate Shoes"
+            ];
+
+
+            function shuffle(a) {
+                var j, x, i;
+                for (i = a.length - 1; i > 0; i--) {
+                    j = Math.floor(Math.random() * (i + 1));
+                    x = a[i];
+                    a[i] = a[j];
+                    a[j] = x;
+                }
+                return a;
+            }
+
+            function generateBoard() {
+                const choices = shuffle([...entries]).slice(0, 25);
+
+                return choices.reduce((acc, cur) => {
+                    acc[cur] = {
+                        selected: false,
+                        title: cur
+                    };
+                    return acc;
+                }, {});
+            }
+
+            function renderBoard(board) {
+                const playerBoardEl = document.querySelector('#player-board');
+                const keys = Object.keys(board);
+                let html = ``;
+                for (let i = 0; i < keys.length; i++) {
+                    html += `<div class="board-item ${board[keys[i]].selected ? 'selected' : ''} ">${board[keys[i]].title}</div>`
+                }
+                playerBoardEl.innerHTML = html;
+                playerBoardEl.querySelectorAll('div.board-item').forEach(el => {
+                    el.addEventListener('click', (ev) => {
+
+                        const id = ev.target.innerText;
+                        playerBoard[id].selected = !playerBoard[id].selected;
+
+                        if (playerBoard[id].selected) {
+                            ev.target.classList.add('selected');
+                        } else {
+                            ev.target.classList.remove('selected');
+                        }
+                        saveBoard(playerBoard);
+                    })
+                })
+            }
+
+            function saveBoard(b) {
+                localStorage.setItem('board', JSON.stringify(b));
+            }
+
+
+            // Start
+
+            if (!playerBoard) {
+                playerBoard = generateBoard();
+                saveBoard(playerBoard);
+            }
+
+            renderBoard(playerBoard);
+
+            document.querySelector('#generate-new-board').addEventListener('click', () => {
+                playerBoard = generateBoard();
+                saveBoard(playerBoard);
+                renderBoard(playerBoard);
+            });
+
+
+        })()
+    </script>
+</body>
+
+</html>
