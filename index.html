@@ -112,7 +112,7 @@
             const entries = [
                 "Small Town",
                 "Flirtatious snowball fight",
-                "Big City Boyfriend",
+                "Big City boyfriend",
                 "Baked goods",
                 "Love interest doesn't get along at first",
                 "Widow / Widower",
@@ -140,7 +140,7 @@
                 "Christmas Party",
                 "Interrupted first kiss",
                 "Child that isn't the lead's",
-                "The Ex tries to get back with the lead",
+                "The ex tries to win back lead",
                 "Inappropriate footware"
             ];
 
@@ -173,7 +173,11 @@
                 const keys = Object.keys(board);
                 let html = ``;
                 for (let i = 0; i < keys.length; i++) {
-                    html += `<div class="board-item ${board[keys[i]].selected ? 'selected' : ''} ">${board[keys[i]].title}</div>`
+                    if(i === 12) {
+                        html += `<div class="board-item selected">Free</div>`                        
+                    } else {
+                        html += `<div class="board-item ${board[keys[i]].selected ? 'selected' : ''} ">${board[keys[i]].title}</div>`
+                    }
                 }
                 playerBoardEl.innerHTML = html;
                 playerBoardEl.querySelectorAll('div.board-item').forEach(el => {
